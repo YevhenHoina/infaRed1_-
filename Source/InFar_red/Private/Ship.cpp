@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AShip::AShip()
@@ -19,8 +20,6 @@ AShip::AShip()
 void AShip::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
 }
 
 // Called every frame
@@ -34,7 +33,7 @@ void AShip::Tick(float DeltaTime)
 void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	AShip::bSimGravityDisabled = 1;
 }
 
 void AShip::SetupCameraComponent()
@@ -55,5 +54,7 @@ void AShip::SetupCameraComponent()
 	SpringArmComp->bUsePawnControlRotation = false;
 	SpringArmComp->bEnableCameraLag = true;
 	SpringArmComp->TargetArmLength = 300.0f;
-	SpringArmComp->SetWorldRotation(FRotator(CameraPitch, CameraYaw, 0));
+	SpringArmComp->SetWorldRotation(FRotator(DefaultCameraPitch, DefaultCameraYaw, 0));
 }
+
+

@@ -26,10 +26,10 @@ public:
 		class USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(EditAnywhere, Category = CameraSettings)
-		float CameraPitch = -70;
+		float DefaultCameraPitch = -70;
 
 	UPROPERTY(EditAnywhere, Category = CameraSettings)
-		float CameraYaw = -10;
+		float DefaultCameraYaw = -5;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Lag, meta = (editcondition = "bEnableCameraLag", ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0"))
 		float CameraLagSpeed;
@@ -40,6 +40,8 @@ public:
 	/** Max distance the camera target may lag behind the current location. If set to zero, no max distance is enforced. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Lag, meta = (editcondition = "bEnableCameraLag", ClampMin = "0.0", UIMin = "0.0"))
 		float CameraLagMaxDistance;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -52,4 +54,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void SetupCameraComponent();
+
 };
