@@ -14,6 +14,12 @@ AShip::AShip()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SetupCameraComponent();
+
+
+	// Don't rotate character to camera direction
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
 }
 
 // Called when the game starts or when spawned

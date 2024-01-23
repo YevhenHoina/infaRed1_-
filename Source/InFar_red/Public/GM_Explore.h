@@ -14,4 +14,6 @@ class INFAR_RED_API AGM_Explore : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	AGM_Explore();
 };
