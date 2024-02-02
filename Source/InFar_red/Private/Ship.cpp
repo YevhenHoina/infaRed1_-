@@ -5,6 +5,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "Components/PrimitiveComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -26,6 +29,16 @@ AShip::AShip()
 void AShip::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetCharacterMovement()->GravityScale = 0.0f;
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
 }
 
 // Called every frame
@@ -40,6 +53,14 @@ void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	AShip::bSimGravityDisabled = 1;
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShip::Move);
+	}
+
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
 void AShip::SetupCameraComponent()
@@ -61,6 +82,21 @@ void AShip::SetupCameraComponent()
 	SpringArmComp->bEnableCameraLag = true;
 	SpringArmComp->TargetArmLength = 300.0f;
 	SpringArmComp->SetWorldRotation(FRotator(DefaultCameraPitch, DefaultCameraYaw, 0));
+}
+
+
+
+
+void AShip::Move(const FInputActionValue& Value)
+{
+	const FVector2D movement = Value.Get<FVector2D>();
+	if ((Controller != nullptr) && (movement != FVector2D(0.0f, 0.0f)))
+	{
+		// Add movement in that direction
+		AddMovementInput(FVector(1, 0, 0), movement.Y);
+		AddMovementInput(FVector(0, 1, 0), movement.X);
+
+	}
 }
 
 
