@@ -78,7 +78,7 @@ void AShip::SetupShip()
 	Direction->SetupAttachment(GetMesh());
 	Direction->bTreatAsASprite = true;
 
-
+	//DefaultGun->SetupAttachment(GetMesh());
 }
 
 void AShip::SetupCameraComponent()

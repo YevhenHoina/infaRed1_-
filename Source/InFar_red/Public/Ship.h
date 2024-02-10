@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "ShipAttachmentPart.h"
 #include "InputActionValue.h"
 #include "Ship.generated.h"
 
@@ -34,7 +35,10 @@ public:
 		float DefaultCameraYaw = -5;
 
 	UPROPERTY(EditAnywhere, Category = ShipParameters)
-		float RotationSpeed = 2;
+		float RotationSpeed = 126;
+
+	UPROPERTY(EditAnywhere, Category = ShipParameters)
+		class UShipAttachmentPart* DefaultGun;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Lag, meta = (editcondition = "bEnableCameraLag", ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0"))
 		float CameraLagSpeed;
@@ -54,9 +58,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* AimAction;
+
+	
 	
 	float currentRotationGoal = 0.f;
 
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
