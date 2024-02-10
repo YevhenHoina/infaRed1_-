@@ -7,9 +7,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Math/Rotator.h"
 #include "Components/PrimitiveComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include <math.h>
+#include "Math/UnrealMathUtility.h"
 // Sets default values
 AShip::AShip()
 {
@@ -17,7 +19,7 @@ AShip::AShip()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SetupCameraComponent();
-
+	SetupShip();
 
 	// Don't rotate character to camera direction
 	bUseControllerRotationPitch = false;
@@ -46,6 +48,12 @@ void AShip::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//rotate ship
+	const FRotator CurrentRotation = GetActorRotation();
+	const FRotator TargetRotation(0, currentRotationGoal, 0);  
+	const FRotator NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, RotationSpeed);
+	SetActorRotation(NewRotation);
+
 }
 
 // Called to bind functionality to input
@@ -57,17 +65,27 @@ void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShip::Move);
+		//EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AShip::Aim);
 	}
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
+void AShip::SetupShip()
+{
+	Direction = CreateDefaultSubobject<UArrowComponent>(TEXT("Direction"));
+	Direction->SetupAttachment(GetMesh());
+	Direction->bTreatAsASprite = true;
+
+
+}
+
 void AShip::SetupCameraComponent()
 {
-	CameraOriginLocation = CreateDefaultSubobject<UArrowComponent>(TEXT("CameraOriginLocation"));
+	
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-	CameraOriginLocation->SetupAttachment(GetMesh());
+	
 	CameraComp->SetupAttachment(GetMesh());
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
@@ -90,13 +108,21 @@ void AShip::SetupCameraComponent()
 void AShip::Move(const FInputActionValue& Value)
 {
 	const FVector2D movement = Value.Get<FVector2D>();
+	
+	currentRotationGoal = 57.3 * atan(movement.X / movement.Y);
+	currentRotationGoal += movement.Y < 0 ? 180 : 0;
 	if ((Controller != nullptr) && (movement != FVector2D(0.0f, 0.0f)))
 	{
 		// Add movement in that direction
 		AddMovementInput(FVector(1, 0, 0), movement.Y);
 		AddMovementInput(FVector(0, 1, 0), movement.X);
-
 	}
+
+}
+
+void AShip::Aim(const FInputActionValue& AxisValue)
+{
+	//SetActorRotation(FRotator(0, 57.3 * atan(movement.X / movement.Y, 0));
 }
 
 

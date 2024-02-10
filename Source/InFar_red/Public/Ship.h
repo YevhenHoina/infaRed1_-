@@ -18,8 +18,8 @@ public:
 	AShip();
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = CameraSettings)
-		class UArrowComponent* CameraOriginLocation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Input)
+		class UArrowComponent* Direction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = CameraSettings)
 		class UCameraComponent* CameraComp;
@@ -32,6 +32,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = CameraSettings)
 		float DefaultCameraYaw = -5;
+
+	UPROPERTY(EditAnywhere, Category = ShipParameters)
+		float RotationSpeed = 2;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Lag, meta = (editcondition = "bEnableCameraLag", ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0"))
 		float CameraLagSpeed;
@@ -51,6 +54,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* AimAction;
+	
+	float currentRotationGoal = 0.f;
 
 protected:
 	// Called when the game starts or when spawned
@@ -62,9 +67,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// Contstruction of ship and it's components, debug stuff etc..
+	virtual void SetupShip();
 
 	virtual void SetupCameraComponent();
 
+
 private:
 	void Move(const FInputActionValue& AxisValue);
+	void Aim(const FInputActionValue& AxisValue);
 };
